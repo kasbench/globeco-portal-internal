@@ -16,6 +16,8 @@ import OrderStatusList from './OrderStatusList';
 import TradeTypeList from './TradeTypeList';
 import DestinationList from './DestinationList';
 import OrderTypeList from './OrderTypeList';
+import OrdersList from './OrdersList';
+import SecurityList from './SecurityList';
 
 const menuItems = [
   'Portfolio Management',
@@ -62,7 +64,7 @@ function App() {
       setMaintenanceAnchorEl(event.currentTarget);
     } else {
       setMaintenanceAnchorEl(null);
-      setCurrentView('');
+      setCurrentView(item);
     }
   };
 
@@ -108,7 +110,7 @@ function App() {
                 key={item}
                 color="inherit"
                 sx={{ fontWeight: 500, mx: 1 }}
-                onClick={item === 'Maintenance' ? (e) => handleSubMenuClick(item, e) : undefined}
+                onClick={item === 'Maintenance' ? (e) => handleSubMenuClick(item, e) : () => handleSubMenuClick(item)}
                 aria-controls={item === 'Maintenance' && maintenanceAnchorEl ? 'maintenance-menu' : undefined}
                 aria-haspopup={item === 'Maintenance'}
               >
@@ -137,6 +139,8 @@ function App() {
         {currentView === 'Trade Type' ? <TradeTypeList /> : null}
         {currentView === 'Destination' ? <DestinationList /> : null}
         {currentView === 'Order Type' ? <OrderTypeList /> : null}
+        {currentView === 'Orders' ? <OrdersList /> : null}
+        {currentView === 'Security' ? <SecurityList /> : null}
         {/* Body left intentionally blank for future content */}
       </Container>
       <Box component="footer" sx={{ bgcolor: 'background.default', py: 2, textAlign: 'center', borderTop: '1px solid #E5E9F2' }}>

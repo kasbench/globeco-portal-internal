@@ -235,4 +235,110 @@ export const deleteOrderType = async (id, versionId) => {
     console.error(`[API ERROR] DELETE ${url}`, error);
     throw error;
   }
+};
+
+export const getOrders = async () => {
+  const url = `${API_BASE}/order`;
+  console.log(`[API] GET ${url}`);
+  try {
+    const res = await axios.get(url);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] GET ${url}`, error);
+    throw error;
+  }
+};
+
+export const createOrder = async (data) => {
+  const url = `${API_BASE}/order`;
+  console.log(`[API] POST ${url}`);
+  try {
+    const res = await axios.post(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] POST ${url}`, error);
+    throw error;
+  }
+};
+
+export const updateOrder = async (id, data) => {
+  const url = `${API_BASE}/order/${id}`;
+  console.log(`[API] PUT ${url}`);
+  try {
+    const res = await axios.put(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] PUT ${url}`, error);
+    throw error;
+  }
+};
+
+export const deleteOrder = async (id, versionId) => {
+  const url = `${API_BASE}/order/${id}?versionId=${versionId}`;
+  console.log(`[API] DELETE ${url}`);
+  try {
+    return await axios.delete(`${API_BASE}/order/${id}`, { params: { versionId } });
+  } catch (error) {
+    console.error(`[API ERROR] DELETE ${url}`, error);
+    throw error;
+  }
+};
+
+export const getBlotters = async () => {
+  const url = `${API_BASE}/blotter`;
+  console.log(`[API] GET ${url}`);
+  try {
+    const res = await axios.get(url);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] GET ${url}`, error);
+    throw error;
+  }
+};
+
+export const getSecurities = async () => {
+  const url = `${API_BASE}/security`;
+  console.log(`[API] GET ${url}`);
+  try {
+    const res = await axios.get(url);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] GET ${url}`, error);
+    throw error;
+  }
+};
+
+export const createSecurity = async (data) => {
+  const url = `${API_BASE}/security`;
+  console.log(`[API] POST ${url}`);
+  try {
+    const res = await axios.post(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] POST ${url}`, error);
+    throw error;
+  }
+};
+
+export const updateSecurity = async (id, data) => {
+  const url = `${API_BASE}/security/${id}`;
+  console.log(`[API] PUT ${url}`);
+  try {
+    const res = await axios.put(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] PUT ${url}`, error);
+    throw error;
+  }
+};
+
+export const deleteSecurity = async (id, versionId) => {
+  const url = `${API_BASE}/security/${id}?versionId=${versionId}`;
+  console.log(`[API] DELETE ${url}`);
+  try {
+    return await axios.delete(`${API_BASE}/security/${id}`, { params: { versionId } });
+  } catch (error) {
+    console.error(`[API ERROR] DELETE ${url}`, error);
+    throw error;
+  }
 }; 
