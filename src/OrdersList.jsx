@@ -49,6 +49,7 @@ export default function OrdersList() {
   const [types, setTypes] = useState([]);
   const [securities, setSecurities] = useState([]);
   const [selectedOrders, setSelectedOrders] = useState([]);
+  const [statusFilter, setStatusFilter] = useState(1);
 
   const fetchData = async () => {
     setLoading(true);
@@ -173,14 +174,32 @@ export default function OrdersList() {
     }
   };
 
+  const filteredOrders = statusFilter
+    ? orders.filter(order => (order.orderStatus?.id ?? order.orderStatusId) === Number(statusFilter))
+    : orders;
+
+  // Find the selected status object
+  const selectedStatus = statuses.find(s => (s.id ?? s.orderStatusId) === Number(statusFilter));
+  const isNew = selectedStatus?.abbreviation?.toLowerCase() === 'new';
+  const isCancel = selectedStatus?.abbreviation?.toLowerCase() === 'cancel';
+
   return (
     <Box sx={{ mt: 4 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
         <Typography variant="h6">Orders</Typography>
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+            style={{ marginRight: 16, padding: 8, borderRadius: 4, border: '1px solid #ccc', minWidth: 140 }}
+          >
+            {statuses.map(s => (
+              <option key={s.id ?? s.orderStatusId} value={s.id ?? s.orderStatusId}>{s.abbreviation}</option>
+            ))}
+          </select>
           <Button variant="contained" onClick={handleOpenAddDialog} sx={{ mr: 2 }}>Add Order</Button>
-          <Button variant="outlined" sx={{ mr: 2 }}>Submit</Button>
-          <Button variant="outlined" color="secondary">Cancel</Button>
+          <Button variant="outlined" sx={{ mr: 2 }} disabled={!isNew}>Submit</Button>
+          <Button variant="outlined" color="secondary" disabled={isNew || isCancel}>Cancel</Button>
         </Box>
       </Stack>
       <Paper sx={{ maxHeight: 500, overflow: 'auto', p: 2 }}>
@@ -213,7 +232,7 @@ export default function OrdersList() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orders.map((order) => (
+                {filteredOrders.map((order) => (
                   <TableRow key={order.orderId ?? order.id}>
                     <TableCell padding="checkbox">
                       <Checkbox

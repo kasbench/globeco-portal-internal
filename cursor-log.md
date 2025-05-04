@@ -102,6 +102,23 @@ Please log all prompts and actions in this file.  Before adding to this log, rev
 - Response:
     1. Added a 'Cancel' button to the Orders page, positioned next to the 'Submit' button at the top right. No functionality is attached yet; it is a UI addition only.
 
+---
+
+- Prompt: Please add a drop down filter to the orders page.  The options on the filter should be all values of order status.  Display orderStatus.abbreviation.  The default value should be orderStatus.id = 1.  Filter the order list by whatever order status is selected in the filter.  Please log to cursor-log.md following the existing format.
+- Response:
+    1. Added a dropdown filter to the Orders page, displaying all orderStatus.abbreviation values.
+    2. The filter defaults to orderStatus.id = 1 and filters the order list by the selected status.
+    3. The filter is placed at the top right, next to the Cancel button.
+
+---
+
+- Prompt: On the order page, if the filter is "new", then enable the submit button and disable the cancel button.  If the filter is cancel, then disable both the submit and cancel button.  Otherwise, disable the submit button and enable the cancel button. Please log to cursor-log.md following the existing format.
+- Response:
+    1. Updated the Orders page so that the enabled/disabled state of the Submit and Cancel buttons depends on the selected order status filter.
+    2. If the filter is 'new', Submit is enabled and Cancel is disabled.
+    3. If the filter is 'cancel', both Submit and Cancel are disabled.
+    4. Otherwise, Submit is disabled and Cancel is enabled.
+
 
 
     
