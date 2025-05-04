@@ -56,13 +56,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SecurityType'
-  /securityType/{id}:
+  /securityType/{securityTypeId}:
     get:
       tags: [Security Type]
       summary: Get a security type by ID
       parameters:
         - in: path
-          name: id
+          name: securityTypeId
           required: true
           schema:
             type: integer
@@ -80,7 +80,7 @@ paths:
       summary: Update a security type
       parameters:
         - in: path
-          name: id
+          name: securityTypeId
           required: true
           schema:
             type: integer
@@ -106,12 +106,12 @@ paths:
       summary: Delete a security type
       parameters:
         - in: path
-          name: id
+          name: securityTypeId
           required: true
           schema:
             type: integer
         - in: query
-          name: version
+          name: versionId
           required: true
           schema:
             type: integer
@@ -248,13 +248,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TradeType'
-  /tradeType/{id}:
+  /tradeType/{tradeTypeId}:
     get:
       tags: [Trade Type]
       summary: Get a trade type by ID
       parameters:
         - in: path
-          name: id
+          name: tradeTypeId
           required: true
           schema:
             type: integer
@@ -272,7 +272,7 @@ paths:
       summary: Update a trade type
       parameters:
         - in: path
-          name: id
+          name: tradeTypeId
           required: true
           schema:
             type: integer
@@ -298,12 +298,12 @@ paths:
       summary: Delete a trade type
       parameters:
         - in: path
-          name: id
+          name: tradeTypeId
           required: true
           schema:
             type: integer
         - in: query
-          name: version
+          name: versionId
           required: true
           schema:
             type: integer
@@ -344,13 +344,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Destination'
-  /destination/{id}:
+  /destination/{destinationId}:
     get:
       tags: [Destination]
       summary: Get a destination by ID
       parameters:
         - in: path
-          name: id
+          name: destinationId
           required: true
           schema:
             type: integer
@@ -368,7 +368,7 @@ paths:
       summary: Update a destination
       parameters:
         - in: path
-          name: id
+          name: destinationId
           required: true
           schema:
             type: integer
@@ -394,12 +394,12 @@ paths:
       summary: Delete a destination
       parameters:
         - in: path
-          name: id
+          name: destinationId
           required: true
           schema:
             type: integer
         - in: query
-          name: version
+          name: versionId
           required: true
           schema:
             type: integer
@@ -440,13 +440,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderType'
-  /orderType/{id}:
+  /orderType/{orderTypeId}:
     get:
       tags: [Order Type]
       summary: Get an order type by ID
       parameters:
         - in: path
-          name: id
+          name: orderTypeId
           required: true
           schema:
             type: integer
@@ -464,7 +464,7 @@ paths:
       summary: Update an order type
       parameters:
         - in: path
-          name: id
+          name: orderTypeId
           required: true
           schema:
             type: integer
@@ -490,12 +490,12 @@ paths:
       summary: Delete an order type
       parameters:
         - in: path
-          name: id
+          name: orderTypeId
           required: true
           schema:
             type: integer
         - in: query
-          name: version
+          name: versionId
           required: true
           schema:
             type: integer
@@ -536,13 +536,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderStatus'
-  /orderStatus/{id}:
+  /orderStatus/{orderStatusId}:
     get:
       tags: [Order Status]
       summary: Get an order status by ID
       parameters:
         - in: path
-          name: id
+          name: orderStatusId
           required: true
           schema:
             type: integer
@@ -560,7 +560,7 @@ paths:
       summary: Update an order status
       parameters:
         - in: path
-          name: id
+          name: orderStatusId
           required: true
           schema:
             type: integer
@@ -586,12 +586,12 @@ paths:
       summary: Delete an order status
       parameters:
         - in: path
-          name: id
+          name: orderStatusId
           required: true
           schema:
             type: integer
         - in: query
-          name: version
+          name: versionId
           required: true
           schema:
             type: integer
@@ -624,7 +624,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SecurityRequestDTO'
+              $ref: '#/components/schemas/Security'
       responses:
         '201':
           description: Created security
@@ -720,7 +720,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OrderRequestDTO'
+              $ref: '#/components/schemas/Order'
       responses:
         '201':
           description: Created order
@@ -761,7 +761,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OrderRequestDTO'
+              $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: Updated order
@@ -1223,7 +1223,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TradeRequestDTO'
+              $ref: '#/components/schemas/Trade'
       responses:
         '201':
           description: Created trade
@@ -1264,7 +1264,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TradeRequestDTO'
+              $ref: '#/components/schemas/Trade'
       responses:
         '200':
           description: Updated trade
@@ -1382,19 +1382,19 @@ components:
     SecurityType:
       type: object
       properties:
-        id:
+        securityTypeId:
           type: integer
         abbreviation:
           type: string
         description:
           type: string
-        version:
+        versionId:
           type: integer
-      required: [id, abbreviation, description, version]
+      required: [securityTypeId, abbreviation, description, versionId]
     Blotter:
       type: object
       properties:
-        id:
+        blotterId:
           type: integer
         name:
           type: string
@@ -1403,57 +1403,57 @@ components:
         securityTypeId:
           type: integer
           nullable: true
-        version:
+        versionId:
           type: integer
-      required: [id, name, autoPopulate, version]
+      required: [blotterId, name, autoPopulate, versionId]
     TradeType:
       type: object
       properties:
-        id:
+        tradeTypeId:
           type: integer
         abbreviation:
           type: string
         description:
           type: string
-        version:
+        versionId:
           type: integer
-      required: [id, abbreviation, description, version]
+      required: [tradeTypeId, abbreviation, description, versionId]
     Destination:
       type: object
       properties:
-        id:
+        destinationId:
           type: integer
         abbreviation:
           type: string
         description:
           type: string
-        version:
+        versionId:
           type: integer
-      required: [id, abbreviation, description, version]
+      required: [destinationId, abbreviation, description, versionId]
     OrderType:
       type: object
       properties:
-        id:
+        orderTypeId:
           type: integer
         abbreviation:
           type: string
         description:
           type: string
-        version:
+        versionId:
           type: integer
-      required: [id, abbreviation, description, version]
+      required: [orderTypeId, abbreviation, description, versionId]
     OrderStatus:
       type: object
       properties:
-        id:
+        orderStatusId:
           type: integer
         abbreviation:
           type: string
         description:
           type: string
-        version:
+        versionId:
           type: integer
-      required: [id, abbreviation, description, version]
+      required: [orderStatusId, abbreviation, description, versionId]
     Security:
       type: object
       properties:
@@ -1537,52 +1537,6 @@ components:
         versionId:
           type: integer
       required: [tradeId, blockId, quantity, tradeTypeId, filledQuantity, versionId]
-    SecurityRequestDTO:
-      type: object
-      properties:
-        ticker:
-          type: string
-        description:
-          type: string
-        version:
-          type: integer
-        securityTypeId:
-          type: integer
-      required: [ticker, version, securityTypeId]
-    OrderRequestDTO:
-      type: object
-      properties:
-        securityId:
-          type: integer
-        blotterId:
-          type: integer
-          nullable: true
-        quantity:
-          type: number
-          format: double
-        orderTypeId:
-          type: integer
-        orderStatusId:
-          type: integer
-        version:
-          type: integer
-      required: [securityId, quantity, orderTypeId, version]
-    TradeRequestDTO:
-      type: object
-      properties:
-        blockId:
-          type: integer
-        quantity:
-          type: number
-          format: double
-        tradeTypeId:
-          type: integer
-        filledQuantity:
-          type: number
-          format: double
-        version:
-          type: integer
-      required: [blockId, quantity, tradeTypeId, version]
   responses:
     NotFound:
       description: Resource not found

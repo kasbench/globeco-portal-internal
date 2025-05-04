@@ -84,6 +84,24 @@ Please log all prompts and actions in this file.  Before adding to this log, rev
 
 ---
 
+- Prompt: On the order page, add a button with the label "Submit".
+- Response:
+    1. Added a 'Submit' button to the Orders page, positioned next to the 'Add Order' button at the top right. No functionality is attached yet; it is a UI addition only.
+
+---
+
+- Prompt: Please add a checkbox to the left of each order on the list. Add a checkbox in the header that can be used to check or uncheck all the rows. Please log to cursor-log.md following the existing format.
+- Response:
+    1. Added a checkbox to the left of each order row in the Orders table.
+    2. Added a checkbox in the table header to select or deselect all visible rows at once.
+    3. No additional functionality was added beyond row selection.
+
+---
+
+- Prompt: Please add a Cancel button to the Orders page.  Please log to cursor-log.md following the existing format.
+- Response:
+    1. Added a 'Cancel' button to the Orders page, positioned next to the 'Submit' button at the top right. No functionality is attached yet; it is a UI addition only.
+
 
 
     
