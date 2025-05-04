@@ -1,0 +1,14 @@
+:root {
+  --color-deep-blue: #174A6A;
+  --color-gold-yellow: #E2B23A;
+  --color-teal-green: #2CA6A4;
+  --color-orange: #F28C28;
+  --color-white: #FFFFFF;
+  --color-light-gray: #F5F7FA;
+  --color-dark-gray: #222B38;
+}
+
+/* Example usage:
+   color: var(--color-deep-blue);
+   background: var(--color-light-gray);
+*/ 
