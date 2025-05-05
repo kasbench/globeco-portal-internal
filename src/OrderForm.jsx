@@ -48,9 +48,11 @@ export default function OrderForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('[OrderForm] handleSubmit called. isView:', isView, 'form:', form);
     if (isView) return;
     const errs = validate();
     setErrors(errs);
+    console.log('[OrderForm] validation errors:', errs);
     if (Object.keys(errs).length > 0) return;
     // Find securityId from ticker
     const security = securities.find(s => s.ticker === form.ticker);
@@ -59,6 +61,7 @@ export default function OrderForm({
       securityId: security ? (security.id || security.securityId) : undefined,
     };
     delete payload.ticker;
+    console.log('[OrderForm] submitting payload:', payload);
     onSubmit(payload);
   };
 

@@ -140,22 +140,30 @@ export default function OrdersList() {
     return errors;
   };
 
-  const handleAddOrder = async () => {
-    const errors = validateAddForm();
-    setAddErrors(errors);
-    if (Object.keys(errors).length > 0) return;
-    // Find security by ticker
-    const security = securities.find(s => s.ticker === addForm.ticker);
+  const handleAddOrder = async (payload) => {
+    console.log('[OrdersList] handleAddOrder called with payload:', payload);
+    // Defensive: check payload
+    if (!payload) {
+      setSnackbar({ open: true, message: 'No data received from form.', severity: 'error' });
+      return;
+    }
+    // Defensive: check required fields
+    const required = ['blotterId', 'securityId', 'orderStatusId', 'orderTypeId', 'quantity'];
+    for (const field of required) {
+      if (!payload[field]) {
+        setSnackbar({ open: true, message: `Missing required field: ${field}`, severity: 'error' });
+        return;
+      }
+    }
     const now = new Date().toISOString();
-    console.log('Submitting order form:', addForm); // Debug log
     try {
       await createOrder({
-        blotterId: addForm.blotterId,
-        securityId: security.id || security.securityId,
-        quantity: Number(addForm.quantity),
+        blotterId: payload.blotterId,
+        securityId: payload.securityId,
+        quantity: Number(payload.quantity),
         orderTimestamp: now,
-        orderTypeId: addForm.orderTypeId,
-        orderStatusId: addForm.orderStatusId,
+        orderTypeId: payload.orderTypeId,
+        orderStatusId: payload.orderStatusId,
       });
       setSnackbar({ open: true, message: 'Order added.', severity: 'success' });
       setOpenAddDialog(false);
@@ -190,8 +198,9 @@ export default function OrdersList() {
   const isNew = selectedStatus?.abbreviation?.toLowerCase() === 'new';
   const isCancel = selectedStatus?.abbreviation?.toLowerCase() === 'cancel';
 
-  // Find the 'open' status id for updating orders
+  // Find the 'open' and 'cancel' status objects for updating orders
   const openStatus = statuses.find(s => s.abbreviation?.toLowerCase() === 'open');
+  const cancelStatus = statuses.find(s => s.abbreviation?.toLowerCase() === 'cancel');
 
   const handleSubmitOrders = async () => {
     if (selectedOrders.length === 0) {
@@ -254,11 +263,52 @@ export default function OrdersList() {
     fetchData();
   };
 
+  // Cancel orders handler
+  const handleCancelOrders = async () => {
+    if (selectedOrders.length === 0) {
+      setSnackbar({ open: true, message: 'No orders selected.', severity: 'warning' });
+      setTimeout(() => setSnackbar(s => ({ ...s, open: false })), 4000);
+      return;
+    }
+    if (!cancelStatus) {
+      setSnackbar({ open: true, message: 'Cancel status not found.', severity: 'error' });
+      return;
+    }
+    for (const orderId of selectedOrders) {
+      const order = orders.find(o => (o.orderId ?? o.id) === orderId);
+      if (!order) continue;
+      try {
+        const updateOrderData = {
+          blotterId: order.blotter?.id ?? order.blotterId,
+          securityId: order.security?.securityId ?? order.security?.id ?? order.securityId,
+          quantity: order.quantity,
+          orderTimestamp: order.orderTimestamp,
+          orderTypeId: order.orderType?.id ?? order.orderTypeId,
+          orderStatusId: cancelStatus.id ?? cancelStatus.orderStatusId,
+          version: order.version ?? order.versionId,
+        };
+        await updateOrder(order.orderId ?? order.id, updateOrderData);
+        // Log to cursor-log.md
+        fetch('/cursor-log.md', {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: `Order ${order.orderId ?? order.id} status changed to cancel by user at ${new Date().toISOString()}\n`,
+        });
+      } catch (e) {
+        setSnackbar({ open: true, message: `Failed to cancel order ${orderId}.`, severity: 'error' });
+        return;
+      }
+    }
+    setSnackbar({ open: true, message: 'Orders cancelled successfully.', severity: 'success' });
+    fetchData();
+  };
+
   return (
     <Box sx={{ mt: 4 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
         <Typography variant="h6">Orders</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography variant="body2" sx={{ mr: 1 }}>Status</Typography>
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
@@ -270,7 +320,12 @@ export default function OrdersList() {
           </select>
           <Button variant="contained" onClick={handleOpenAddDialog} sx={{ mr: 2 }}>Add Order</Button>
           <Button variant="outlined" sx={{ mr: 2 }} disabled={!isNew} onClick={handleSubmitOrders}>Submit</Button>
-          <Button variant="outlined" color="secondary" disabled={isNew || isCancel}>Cancel</Button>
+          <Button variant="outlined" color="secondary" 
+            disabled={!(selectedStatus && selectedStatus.abbreviation?.toLowerCase() === 'open')} 
+            onClick={handleCancelOrders}
+          >
+            Cancel
+          </Button>
         </Box>
       </Stack>
       <Paper sx={{ maxHeight: 500, overflow: 'auto', p: 2 }}>
