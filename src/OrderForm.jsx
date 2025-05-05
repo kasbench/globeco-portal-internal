@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, Stack, Button, TextField } from '@mui/material';
 
 export default function OrderForm({
@@ -11,36 +11,25 @@ export default function OrderForm({
   onSubmit,
   onClose,
 }) {
-  const isView = mode === 'view';
-  const isEdit = mode === 'edit';
-  const [form, setForm] = useState({
-    blotterId: '',
-    ticker: '',
-    orderStatusId: '',
-    orderTypeId: '',
-    quantity: '',
-  });
-  const [errors, setErrors] = useState({});
+  // Normalize mode to lowercase and add debug log
+  const normalizedMode = (mode || 'add').toLowerCase();
+  // console.log('OrderForm mode:', normalizedMode);
+  const isView = normalizedMode === 'view';
+  const isEdit = normalizedMode === 'edit';
 
-  useEffect(() => {
-    if (isEdit || isView) {
-      setForm({
+  // Initialize form state based on mode and order
+  const initialForm = normalizedMode === 'add'
+    ? { blotterId: '', ticker: '', orderStatusId: '', orderTypeId: '', quantity: '' }
+    : {
         blotterId: order.blotter?.id || order.blotterId || '',
         ticker: order.security?.ticker || order.ticker || '',
         orderStatusId: order.orderStatus?.id || order.orderStatusId || '',
         orderTypeId: order.orderType?.id || order.orderTypeId || '',
         quantity: order.quantity || '',
-      });
-    } else {
-      setForm({
-        blotterId: '',
-        ticker: '',
-        orderStatusId: '',
-        orderTypeId: '',
-        quantity: '',
-      });
-    }
-  }, [order, mode, isEdit, isView]);
+      };
+
+  const [form, setForm] = useState(initialForm);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

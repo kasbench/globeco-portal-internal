@@ -119,6 +119,19 @@ Please log all prompts and actions in this file.  Before adding to this log, rev
     3. If the filter is 'cancel', both Submit and Cancel are disabled.
     4. Otherwise, Submit is disabled and Cancel is enabled.
 
+---
+
+- Prompt: When a user clicks on submit on the Orders page, the following actions should happen to each checked order:
+  - A new block should be created with the security id and order type id of the order via a POST to /block
+  - A new blockAllocation should be created with order id from the order and the block id from the block created in the previous step, via a POST to /blockAllocation
+  - A new trade should be created via a POST to /trade.  The destinationID should be null, the blockId should be the one created above, the quantity should be the quantity of the order, the tradeTypeId should be null, the filledQuantityShould be zero.
+  - The status of each checked order should be changed to open via a PUT /order/{id}.  Do this only if the prior steps were successful.
+  If no orders were checked, a popup should be displayed to remind the user that no orders were selected.  The popup should close after 4 seconds.
+- Response:
+    1. Implemented submit button logic: for each checked order, creates a block, block allocation, and trade, then updates the order status to 'open' if all steps succeed.
+    2. If no orders are checked, displays a popup for 4 seconds to remind the user to select orders.
+    3. Uses the existing snackbar for user feedback and error reporting.
+
 
 
     

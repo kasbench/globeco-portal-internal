@@ -341,4 +341,40 @@ export const deleteSecurity = async (id, versionId) => {
     console.error(`[API ERROR] DELETE ${url}`, error);
     throw error;
   }
+};
+
+export const createBlock = async (data) => {
+  const url = `${API_BASE}/block`;
+  console.log(`[API] POST ${url}`);
+  try {
+    const res = await axios.post(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] POST ${url}`, error);
+    throw error;
+  }
+};
+
+export const createBlockAllocation = async (data) => {
+  const url = `${API_BASE}/blockAllocation`;
+  console.log(`[API] POST ${url}`);
+  try {
+    const res = await axios.post(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] POST ${url}`, error);
+    throw error;
+  }
+};
+
+export const createTrade = async (data) => {
+  const url = `${API_BASE}/trade`;
+  console.log(`[API] POST ${url}`);
+  try {
+    const res = await axios.post(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(`[API ERROR] POST ${url}`, error);
+    throw error;
+  }
 }; 

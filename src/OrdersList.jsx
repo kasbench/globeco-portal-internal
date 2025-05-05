@@ -24,7 +24,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getOrders, deleteOrder, getBlotters, getOrderStatuses, getOrderTypes, getSecurities, createOrder, updateOrder } from './api';
+import { getOrders, deleteOrder, getBlotters, getOrderStatuses, getOrderTypes, getSecurities, createOrder, updateOrder, createBlock, createBlockAllocation, createTrade } from './api';
 import OrderForm from './OrderForm';
 
 export default function OrdersList() {
@@ -55,7 +55,14 @@ export default function OrdersList() {
     setLoading(true);
     try {
       const data = await getOrders();
-      setOrders(data);
+      // Normalize security object
+      const normalized = data.map(order => ({
+        ...order,
+        security: order.security
+          ? { ...order.security, securityId: order.security.securityId ?? order.security.id }
+          : (order.securityId ? { securityId: order.securityId } : undefined),
+      }));
+      setOrders(normalized);
       setError('');
     } catch (e) {
       setError('Failed to load orders.');
@@ -183,6 +190,70 @@ export default function OrdersList() {
   const isNew = selectedStatus?.abbreviation?.toLowerCase() === 'new';
   const isCancel = selectedStatus?.abbreviation?.toLowerCase() === 'cancel';
 
+  // Find the 'open' status id for updating orders
+  const openStatus = statuses.find(s => s.abbreviation?.toLowerCase() === 'open');
+
+  const handleSubmitOrders = async () => {
+    if (selectedOrders.length === 0) {
+      setSnackbar({ open: true, message: 'No orders selected.', severity: 'warning' });
+      setTimeout(() => setSnackbar(s => ({ ...s, open: false })), 4000);
+      return;
+    }
+    for (const orderId of selectedOrders) {
+      const order = orders.find(o => (o.orderId ?? o.id) === orderId);
+      if (!order) continue;
+      try {
+        console.log('[DEBUG] order object:', order);
+        // 1. Create block
+        const blockData = {
+          securityId: order.security?.securityId ?? order.security?.id ?? order.securityId,
+          orderTypeId: order.orderType?.id ?? order.orderTypeId,
+        };
+        console.log('[DEBUG] POST /block', blockData);
+        const block = await createBlock(blockData);
+        // 2. Create block allocation
+        const blockAllocData = {
+          orderId: order.orderId ?? order.id,
+          blockId: block.id,
+          quantity: order.quantity,
+          filledQuantity: 0,
+        };
+        console.log('[DEBUG] POST /blockAllocation', blockAllocData);
+        await createBlockAllocation(blockAllocData);
+        // 3. Create trade
+        const tradeData = {
+          destinationId: null,
+          blockId: block.id,
+          quantity: order.quantity,
+          tradeTypeId: null,
+          filledQuantity: 0,
+          version: 1,
+        };
+        console.log('[DEBUG] POST /trade', tradeData);
+        await createTrade(tradeData);
+        // 4. Update order status to 'open'
+        if (openStatus) {
+          const updateOrderData = {
+            blotterId: order.blotter?.id ?? order.blotterId,
+            securityId: order.security?.securityId ?? order.security?.id ?? order.securityId,
+            quantity: order.quantity,
+            orderTimestamp: order.orderTimestamp,
+            orderTypeId: order.orderType?.id ?? order.orderTypeId,
+            orderStatusId: openStatus.id ?? openStatus.orderStatusId,
+            version: order.version ?? order.versionId,
+          };
+          console.log(`[DEBUG] PUT /order/${order.orderId ?? order.id}`, updateOrderData);
+          await updateOrder(order.orderId ?? order.id, updateOrderData);
+        }
+      } catch (e) {
+        setSnackbar({ open: true, message: `Failed to submit order ${orderId}.`, severity: 'error' });
+        return;
+      }
+    }
+    setSnackbar({ open: true, message: 'Orders submitted successfully.', severity: 'success' });
+    fetchData();
+  };
+
   return (
     <Box sx={{ mt: 4 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
@@ -198,7 +269,7 @@ export default function OrdersList() {
             ))}
           </select>
           <Button variant="contained" onClick={handleOpenAddDialog} sx={{ mr: 2 }}>Add Order</Button>
-          <Button variant="outlined" sx={{ mr: 2 }} disabled={!isNew}>Submit</Button>
+          <Button variant="outlined" sx={{ mr: 2 }} disabled={!isNew} onClick={handleSubmitOrders}>Submit</Button>
           <Button variant="outlined" color="secondary" disabled={isNew || isCancel}>Cancel</Button>
         </Box>
       </Stack>
