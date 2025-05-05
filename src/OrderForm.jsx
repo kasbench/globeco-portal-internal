@@ -11,6 +11,7 @@ export default function OrderForm({
   onSubmit,
   onClose,
 }) {
+  order = order || {}; // Prevent null order crash
   // Normalize mode to lowercase and add debug log
   const normalizedMode = (mode || 'add').toLowerCase();
   // console.log('OrderForm mode:', normalizedMode);
